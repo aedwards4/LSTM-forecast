@@ -60,6 +60,7 @@ This API will accept only POST request
 @app.route('/api/forecast', methods=['POST'])
 def forecast():
     body = request.get_json()
+    print(body)
     issues = body["issues"]
     type = body["type"]
     repo_name = body["repo"]
