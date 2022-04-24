@@ -17,6 +17,14 @@ import matplotlib.dates as mdates
 import time
 from flask_cors import CORS
 
+# -------- FB/PROPHET --------
+from fbprophet import Prophet
+# -----------------------------
+
+# -------- STATSMODELS --------
+import statsmodels.api as sm
+# -----------------------------
+
 # Tensorflow (Keras & LSTM) related packages
 import tensorflow as tf
 from tensorflow.python.keras import Sequential
@@ -52,6 +60,9 @@ def build_actual_response(response):
                          "PUT, GET, POST, DELETE, OPTIONS")
     return response
 
+
+
+
 '''
 API route path is  "/api/forecast"
 This API will accept only POST request
@@ -61,12 +72,25 @@ This API will accept only POST request
 def forecast():
     body = request.get_json()
     print(body)
-    issues = body["issues"]
-    type = body["type"]
-    repo_name = body["repo"]
+    issues = body["issues"] # issues_reponse
+    type = body["type"]     # "created_at"
+    repo_name = body["repo"]    
+    
     data_frame = pd.DataFrame(issues)
-    df1 = data_frame.groupby([type], as_index=False).count()
-    df = df1[[type, 'issue_number']]
+    if type == "created_at" or type == "closed_at":
+        df1 = data_frame.groupby([type], as_index=False).count()
+        df = df1[[type, 'issue_number']]
+    elif type == "collab_created_at":
+        collab_ds = []
+        collab_y = []
+        for key in coll_sets.keys():
+            collab_ds.append(key)
+            collab_y.append(coll_sets[key])
+        dfdata = {'ds': collab_ds, 'y': collab_y}
+        df = pd.DataFrame.from_dict(dfdata)
+    else:
+        data_frame['y'] = 1
+        df = data_frame.groupby([type], as_index=False).count()
     df.columns = ['ds', 'y']
 
     df['ds'] = df['ds'].astype('datetime64[ns]')
@@ -135,9 +159,22 @@ def forecast():
     model.add(Dense(1))
     model.compile(loss='mean_squared_error', optimizer='adam')
 
+
+    # -------- STATSMODELS --------
+
+    # -----------------------------
+
+
     # Fit the model with training data and set appropriate hyper parameters
     history = model.fit(X_train, Y_train, epochs=20, batch_size=70, validation_data=(X_test, Y_test),
                         callbacks=[EarlyStopping(monitor='val_loss', patience=10)], verbose=1, shuffle=False)
+
+    # -------- FB/PROPHET ---------
+    model_fb = Prophet()
+    model_fb.fit(df)
+    future = model_fb.make_future_dataframe(periods=700)
+    forecast = model_fb.predict(future)
+    # -----------------------------
 
     '''
     Creating image URL
@@ -161,6 +198,18 @@ def forecast():
     ALL_ISSUES_DATA_IMAGE_NAME = "all_issues_data_" + type + "_"+ repo_name + ".png"
     ALL_ISSUES_DATA_URL = BASE_IMAGE_PATH + ALL_ISSUES_DATA_IMAGE_NAME
 
+    # -------- FB/PROPHET ---------
+    FBPROPHET_GENERATED_IMAGE_NAME = "fbprophet_generated_data_" + type +"_" + repo_name + ".png"
+
+    FBPROPHET_GENERATED_URL = BASE_IMAGE_PATH + FBPROPHET_GENERATED_IMAGE_NAME
+    # -----------------------------
+
+    # -------- STATSMODELS --------
+    STATSMODEL_GENERATED_IMAGE_NAME = "statsmodel_generated_data_" + type +"_" + repo_name + ".png"
+    
+    STATSMODEL_GENERATED_URL = BASE_IMAGE_PATH + STATSMODEL_GENERATED_IMAGE_NAME
+    # -----------------------------
+
     # Add your unique Bucket Name if you want to run it local
     BUCKET_NAME = os.environ.get(
         'BUCKET_NAME', 'Your_BUCKET_NAME')
@@ -181,6 +230,7 @@ def forecast():
     # Predict issues for test data
     y_pred = model.predict(X_test)
 
+    # -------- LSTM ---------
     # Plot the LSTM Generated image
     fig, axs = plt.subplots(1, 1, figsize=(10, 4))
     X = mdates.date2num(days)
@@ -195,6 +245,25 @@ def forecast():
     axs.set_ylabel('Issues')
     # Save the figure in /static/images folder
     plt.savefig(LOCAL_IMAGE_PATH + LSTM_GENERATED_IMAGE_NAME)
+    # -----------------------------
+
+    # -------- FB/PROPHET ---------
+    # 5. Plot forecast
+    forecast_fig = model_fb.plot(forecast)
+    forecast_fig.legend()
+    forecast_fig.set_title('FB Prophet Generated Data For ' + type)
+    forecast_fig.set_xlabel('Time Steps')
+    forecast_fig.set_ylabel('Issues')
+    forecast_fig.savefig(LOCAL_IMAGE_PATH + FBPROPHET_GENERATED_IMAGE_NAME)
+    # -----------------------------
+
+
+    # -------- STATSMODELS --------
+
+    # -----------------------------
+
+
+
 
     # Plot the All Issues data images
     fig, axs = plt.subplots(1, 1, figsize=(10, 4))
