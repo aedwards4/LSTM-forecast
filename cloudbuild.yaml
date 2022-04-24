@@ -1,6 +1,6 @@
 steps:
-  - name: "gcr.io/cloud-builders/statsmodels"
-    args: ["install"]
+  - name: "statsmodels"
+    args: ["conda", "install", "-c", "conda-forge"]
   - name: "gcr.io/cloud-builders/pystan"
     args: ["install"]
   - name: "gcr.io/cloud-builders/fbprophet"
