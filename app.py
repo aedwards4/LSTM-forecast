@@ -126,12 +126,14 @@ def forecast():
     # Divide training - test data with 80-20 split
     train_size = int(len(Ys) * 0.80)
     test_size = len(Ys) - train_size
-    train, test = Ys[0:train_size, :], Ys[train_size:len(Ys), :]
+    train, test = Ys[0:train_size, :], Ys[train_size:len(Ys), :] #//////////
     print('train size:', len(train), ", test size:", len(test))
 
     # Create the training and test dataset
     def create_dataset(dataset, look_back=1):
         X, Y = [], []
+        while len(dataset) < look_back-1:
+            look_back = look_back // 2
         for i in range(len(dataset)-look_back-1):
             a = dataset[i:(i+look_back), 0]
             X.append(a)
