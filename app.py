@@ -18,11 +18,11 @@ import time
 from flask_cors import CORS
 
 # -------- FB/PROPHET --------
-#from fbprophet import Prophet
+from fbprophet import Prophet
 # -----------------------------
 
 # -------- STATSMODELS --------
-#import statsmodels.api as sm
+import statsmodels.api as sm
 # -----------------------------
 
 # Tensorflow (Keras & LSTM) related packages
@@ -83,9 +83,9 @@ def forecast():
     elif type == "collab_created_at":
         collab_ds = []
         collab_y = []
-        for key in coll_sets.keys():
+        for key in issues.keys():
             collab_ds.append(key)
-            collab_y.append(coll_sets[key])
+            collab_y.append(issues[key])
         dfdata = {'ds': collab_ds, 'y': collab_y}
         df = pd.DataFrame.from_dict(dfdata)
     else:
