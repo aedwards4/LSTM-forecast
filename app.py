@@ -172,10 +172,10 @@ def forecast():
                         callbacks=[EarlyStopping(monitor='val_loss', patience=10)], verbose=1, shuffle=False)
 
     # -------- FB/PROPHET ---------
-    model_fb = Prophet()
-    model_fb.fit(df)
-    future = model_fb.make_future_dataframe(periods=700)
-    forecast = model_fb.predict(future)
+    # model_fb = Prophet()
+    # model_fb.fit(df)
+    # future = model_fb.make_future_dataframe(periods=700)
+    # forecast = model_fb.predict(future)
     # -----------------------------
 
     '''
@@ -251,12 +251,12 @@ def forecast():
 
     # -------- FB/PROPHET ---------
     # 5. Plot forecast
-    forecast_fig = model_fb.plot(forecast)
-    forecast_fig.legend()
-    forecast_fig.set_title('FB Prophet Generated Data For ' + type)
-    forecast_fig.set_xlabel('Time Steps')
-    forecast_fig.set_ylabel('Issues')
-    forecast_fig.savefig(LOCAL_IMAGE_PATH + FBPROPHET_GENERATED_IMAGE_NAME)
+    # forecast_fig = model_fb.plot(forecast)
+    # forecast_fig.legend()
+    # forecast_fig.set_title('FB Prophet Generated Data For ' + type)
+    # forecast_fig.set_xlabel('Time Steps')
+    # forecast_fig.set_ylabel('Issues')
+    # forecast_fig.savefig(LOCAL_IMAGE_PATH + FBPROPHET_GENERATED_IMAGE_NAME)
     # -----------------------------
 
 
