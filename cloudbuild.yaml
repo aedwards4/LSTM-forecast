@@ -1,4 +1,10 @@
 steps:
+  - name: "gcr.io/cloud-builders/statsmodels"
+    args: ["install"]
+  - name: "gcr.io/cloud-builders/pystan"
+    args: ["install"]
+  - name: "gcr.io/cloud-builders/fbprophet"
+    args: ["install"]
   # Build the container image
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/lstm-347721/lstm", "."]
