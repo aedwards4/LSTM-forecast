@@ -18,7 +18,7 @@ import time
 from flask_cors import CORS
 
 # -------- FB/PROPHET --------
-from fbprophet import Prophet
+# from fbprophet import Prophet
 # -----------------------------
 
 # -------- STATSMODELS --------

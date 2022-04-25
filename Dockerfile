@@ -13,9 +13,9 @@ COPY ./requirements.txt /app/requirements.txt
 WORKDIR /app
 
 RUN pip install -r requirements.txt
-RUN pip install pystan
-RUN pip install prophet
-RUN pip install statsmodels
+# RUN pip install pystan
+# RUN pip install prophet
+# RUN pip install statsmodels
 
 COPY . /app
 
