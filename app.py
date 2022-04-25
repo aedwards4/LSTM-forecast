@@ -86,7 +86,7 @@ def forecast():
         for collab in issues:
             for key in collab.keys():
                 collab_ds.append(key)
-                collab_y.append(issues[key])
+                collab_y.append(collab[key])
         dfdata = {'ds': collab_ds, 'y': collab_y}
         df = pd.DataFrame.from_dict(dfdata)
     else:
