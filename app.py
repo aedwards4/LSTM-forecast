@@ -80,15 +80,6 @@ def forecast():
     if type == "created_at" or type == "closed_at":
         df1 = data_frame.groupby([type], as_index=False).count()
         df = df1[[type, 'issue_number']]
-    elif type == "collab_created_at":
-        collab_ds = []
-        collab_y = []
-        for collab in issues:
-            for key in collab.keys():
-                collab_ds.append(key)
-                collab_y.append(collab[key])
-        dfdata = {'ds': collab_ds, 'y': collab_y}
-        df = pd.DataFrame.from_dict(dfdata)
     else:
         data_frame['y'] = 1
         df = data_frame.groupby([type], as_index=False).count()
