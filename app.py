@@ -83,9 +83,10 @@ def forecast():
     elif type == "collab_created_at":
         collab_ds = []
         collab_y = []
-        for key in issues.keys():
-            collab_ds.append(key)
-            collab_y.append(issues[key])
+        for collab in issues:
+            for key in collab.keys():
+                collab_ds.append(key)
+                collab_y.append(issues[key])
         dfdata = {'ds': collab_ds, 'y': collab_y}
         df = pd.DataFrame.from_dict(dfdata)
     else:
