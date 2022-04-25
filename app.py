@@ -22,7 +22,7 @@ from fbprophet import Prophet
 # -----------------------------
 
 # -------- STATSMODELS --------
-import statsmodels.api as sm
+#import statsmodels.api as sm
 # -----------------------------
 
 # Tensorflow (Keras & LSTM) related packages
